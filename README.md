@@ -1,29 +1,32 @@
-# Create T3 App
+# TasteTS
+
+TasteTS is an internet application that allows users to create, share, and review recipes.
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+## Purpose
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+TasteTS is a portfolio project created to demonstrate my skills in full-stack TypeScript development.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Documentation
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+The documentation is split into two parts:
 
-## Learn More
+- **Development docs** - a very detailed, step by step record of the whole development process. It lets the reader dive into the creator's decision-making process and follow every major change in the code.  
+The maintenance period is currently indefinite. Meant mainly for recruiters.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- **Project docs** - brief, and to-the-point documentation of the whole project. Just docs as they should be.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+**TL;DR**  
+- Development docs - record of decisions and progress  
+- Project docs - clean project documentation
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Full tech stack
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- Next.js
+- TypeScript
+- tRPC
+- Drizzle
+- Tailwind CSS
+- NextAuth.js
+- MySQL
