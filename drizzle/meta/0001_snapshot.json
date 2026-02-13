@@ -1,0 +1,1101 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "34cc1e27-356c-4c69-b37f-2f32c2afef55",
+  "prevId": "c2fe3b6f-f80b-4977-a632-34e656c0942e",
+  "tables": {
+    "TasteTS_account": {
+      "name": "TasteTS_account",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "provider": {
+          "name": "provider",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "providerAccountId": {
+          "name": "providerAccountId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "token_type": {
+          "name": "token_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "session_state": {
+          "name": "session_state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "account_user_id_idx": {
+          "name": "account_user_id_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_account_userId_TasteTS_user_id_fk": {
+          "name": "TasteTS_account_userId_TasteTS_user_id_fk",
+          "tableFrom": "TasteTS_account",
+          "tableTo": "TasteTS_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_account_provider_providerAccountId_pk": {
+          "name": "TasteTS_account_provider_providerAccountId_pk",
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_additionalIngredientsList": {
+      "name": "TasteTS_additionalIngredientsList",
+      "columns": {
+        "recipeId": {
+          "name": "recipeId",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "language": {
+          "name": "language",
+          "type": "enum('polish','english')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'english'"
+        },
+        "ingredients": {
+          "name": "ingredients",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "additional_ingredients_list_recipe_id_idx": {
+          "name": "additional_ingredients_list_recipe_id_idx",
+          "columns": [
+            "recipeId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_additionalIngredientsList_recipeId_TasteTS_recipe_id_fk": {
+          "name": "TasteTS_additionalIngredientsList_recipeId_TasteTS_recipe_id_fk",
+          "tableFrom": "TasteTS_additionalIngredientsList",
+          "tableTo": "TasteTS_recipe",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_additionalIngredientsList_recipeId_language_pk": {
+          "name": "TasteTS_additionalIngredientsList_recipeId_language_pk",
+          "columns": [
+            "recipeId",
+            "language"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_alternativeOnRecipe": {
+      "name": "TasteTS_alternativeOnRecipe",
+      "columns": {
+        "recipeId": {
+          "name": "recipeId",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ingredientId": {
+          "name": "ingredientId",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alternativeToId": {
+          "name": "alternativeToId",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unit": {
+          "name": "unit",
+          "type": "enum('none','ml','g','pcs','tsp','tblsp')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "alternative_on_recipe_recipe_id_idx": {
+          "name": "alternative_on_recipe_recipe_id_idx",
+          "columns": [
+            "recipeId"
+          ],
+          "isUnique": false
+        },
+        "alternative_on_recipe_ingredient_id_idx": {
+          "name": "alternative_on_recipe_ingredient_id_idx",
+          "columns": [
+            "ingredientId"
+          ],
+          "isUnique": false
+        },
+        "alternative_on_recipe_alternative_to_id_idx": {
+          "name": "alternative_on_recipe_alternative_to_id_idx",
+          "columns": [
+            "alternativeToId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "alternative_on_recipe_recipe_id_fk": {
+          "name": "alternative_on_recipe_recipe_id_fk",
+          "tableFrom": "TasteTS_alternativeOnRecipe",
+          "tableTo": "TasteTS_recipe",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "alternative_on_recipe_ingredient_id_fk": {
+          "name": "alternative_on_recipe_ingredient_id_fk",
+          "tableFrom": "TasteTS_alternativeOnRecipe",
+          "tableTo": "TasteTS_ingredient",
+          "columnsFrom": [
+            "ingredientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "alternative_on_recipe_alternative_to_id_fk": {
+          "name": "alternative_on_recipe_alternative_to_id_fk",
+          "tableFrom": "TasteTS_alternativeOnRecipe",
+          "tableTo": "TasteTS_ingredient",
+          "columnsFrom": [
+            "alternativeToId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "alternative_on_recipe_pk": {
+          "name": "alternative_on_recipe_pk",
+          "columns": [
+            "recipeId",
+            "ingredientId",
+            "alternativeToId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_excludantOnIngredient": {
+      "name": "TasteTS_excludantOnIngredient",
+      "columns": {
+        "excludantId": {
+          "name": "excludantId",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ingredientId": {
+          "name": "ingredientId",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alternativeId": {
+          "name": "alternativeId",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "excludant_on_ingredient_excludant_id_idx": {
+          "name": "excludant_on_ingredient_excludant_id_idx",
+          "columns": [
+            "excludantId"
+          ],
+          "isUnique": false
+        },
+        "excludant_on_ingredient_ingredient_id_idx": {
+          "name": "excludant_on_ingredient_ingredient_id_idx",
+          "columns": [
+            "ingredientId"
+          ],
+          "isUnique": false
+        },
+        "excludant_on_ingredient_alternative_id_idx": {
+          "name": "excludant_on_ingredient_alternative_id_idx",
+          "columns": [
+            "alternativeId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "excludant_on_ingredient_excludant_id_fk": {
+          "name": "excludant_on_ingredient_excludant_id_fk",
+          "tableFrom": "TasteTS_excludantOnIngredient",
+          "tableTo": "TasteTS_excludant",
+          "columnsFrom": [
+            "excludantId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "excludant_on_ingredient_ingredient_id_fk": {
+          "name": "excludant_on_ingredient_ingredient_id_fk",
+          "tableFrom": "TasteTS_excludantOnIngredient",
+          "tableTo": "TasteTS_ingredient",
+          "columnsFrom": [
+            "ingredientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "excludant_on_ingredient_alternative_id_fk": {
+          "name": "excludant_on_ingredient_alternative_id_fk",
+          "tableFrom": "TasteTS_excludantOnIngredient",
+          "tableTo": "TasteTS_ingredient",
+          "columnsFrom": [
+            "alternativeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "excludant_on_ingredient_pk": {
+          "name": "excludant_on_ingredient_pk",
+          "columns": [
+            "excludantId",
+            "ingredientId",
+            "alternativeId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_excludantOnRecipe": {
+      "name": "TasteTS_excludantOnRecipe",
+      "columns": {
+        "recipeId": {
+          "name": "recipeId",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "excludantId": {
+          "name": "excludantId",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ingredientId": {
+          "name": "ingredientId",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "excludant_on_recipe_recipe_id_idx": {
+          "name": "excludant_on_recipe_recipe_id_idx",
+          "columns": [
+            "recipeId"
+          ],
+          "isUnique": false
+        },
+        "excludant_on_recipe_excludant_id_idx": {
+          "name": "excludant_on_recipe_excludant_id_idx",
+          "columns": [
+            "excludantId"
+          ],
+          "isUnique": false
+        },
+        "excludant_on_recipe_ingredient_id_idx": {
+          "name": "excludant_on_recipe_ingredient_id_idx",
+          "columns": [
+            "ingredientId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_excludantOnRecipe_recipeId_TasteTS_recipe_id_fk": {
+          "name": "TasteTS_excludantOnRecipe_recipeId_TasteTS_recipe_id_fk",
+          "tableFrom": "TasteTS_excludantOnRecipe",
+          "tableTo": "TasteTS_recipe",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "TasteTS_excludantOnRecipe_excludantId_TasteTS_excludant_id_fk": {
+          "name": "TasteTS_excludantOnRecipe_excludantId_TasteTS_excludant_id_fk",
+          "tableFrom": "TasteTS_excludantOnRecipe",
+          "tableTo": "TasteTS_excludant",
+          "columnsFrom": [
+            "excludantId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "TasteTS_excludantOnRecipe_ingredientId_TasteTS_ingredient_id_fk": {
+          "name": "TasteTS_excludantOnRecipe_ingredientId_TasteTS_ingredient_id_fk",
+          "tableFrom": "TasteTS_excludantOnRecipe",
+          "tableTo": "TasteTS_ingredient",
+          "columnsFrom": [
+            "ingredientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_excludantOnRecipe_recipeId_excludantId_ingredientId_pk": {
+          "name": "TasteTS_excludantOnRecipe_recipeId_excludantId_ingredientId_pk",
+          "columns": [
+            "recipeId",
+            "excludantId",
+            "ingredientId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_excludant": {
+      "name": "TasteTS_excludant",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "namePL": {
+          "name": "namePL",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nameEN": {
+          "name": "nameEN",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "TasteTS_excludant_id": {
+          "name": "TasteTS_excludant_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_ingredientOnRecipe": {
+      "name": "TasteTS_ingredientOnRecipe",
+      "columns": {
+        "recipeId": {
+          "name": "recipeId",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ingredientId": {
+          "name": "ingredientId",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unit": {
+          "name": "unit",
+          "type": "enum('none','ml','g','pcs','tsp','tblsp')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alternative": {
+          "name": "alternative",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "ingredient_on_recipe_recipe_id_idx": {
+          "name": "ingredient_on_recipe_recipe_id_idx",
+          "columns": [
+            "recipeId"
+          ],
+          "isUnique": false
+        },
+        "ingredient_on_recipe_ingredient_id_idx": {
+          "name": "ingredient_on_recipe_ingredient_id_idx",
+          "columns": [
+            "ingredientId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_ingredientOnRecipe_recipeId_TasteTS_recipe_id_fk": {
+          "name": "TasteTS_ingredientOnRecipe_recipeId_TasteTS_recipe_id_fk",
+          "tableFrom": "TasteTS_ingredientOnRecipe",
+          "tableTo": "TasteTS_recipe",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "TasteTS_ingredientOnRecipe_ingredientId_TasteTS_ingredient_id_fk": {
+          "name": "TasteTS_ingredientOnRecipe_ingredientId_TasteTS_ingredient_id_fk",
+          "tableFrom": "TasteTS_ingredientOnRecipe",
+          "tableTo": "TasteTS_ingredient",
+          "columnsFrom": [
+            "ingredientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_ingredientOnRecipe_recipeId_ingredientId_pk": {
+          "name": "TasteTS_ingredientOnRecipe_recipeId_ingredientId_pk",
+          "columns": [
+            "recipeId",
+            "ingredientId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_ingredient": {
+      "name": "TasteTS_ingredient",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "mediumint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "namePL": {
+          "name": "namePL",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "nameEN": {
+          "name": "nameEN",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "TasteTS_ingredient_id": {
+          "name": "TasteTS_ingredient_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_recipeContent": {
+      "name": "TasteTS_recipeContent",
+      "columns": {
+        "recipeId": {
+          "name": "recipeId",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "language": {
+          "name": "language",
+          "type": "enum('polish','english')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'english'"
+        },
+        "recipeName": {
+          "name": "recipeName",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ingredientNotes": {
+          "name": "ingredientNotes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recipeContent": {
+          "name": "recipeContent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('public','private')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'private'"
+        }
+      },
+      "indexes": {
+        "recipe_content_recipe_id_idx": {
+          "name": "recipe_content_recipe_id_idx",
+          "columns": [
+            "recipeId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_recipeContent_recipeId_TasteTS_recipe_id_fk": {
+          "name": "TasteTS_recipeContent_recipeId_TasteTS_recipe_id_fk",
+          "tableFrom": "TasteTS_recipeContent",
+          "tableTo": "TasteTS_recipe",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_recipeContent_recipeId_language_pk": {
+          "name": "TasteTS_recipeContent_recipeId_language_pk",
+          "columns": [
+            "recipeId",
+            "language"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_recipe": {
+      "name": "TasteTS_recipe",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('public','private')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'private'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "creatorId": {
+          "name": "creatorId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "recipe_creator_id_idx": {
+          "name": "recipe_creator_id_idx",
+          "columns": [
+            "creatorId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_recipe_creatorId_TasteTS_user_id_fk": {
+          "name": "TasteTS_recipe_creatorId_TasteTS_user_id_fk",
+          "tableFrom": "TasteTS_recipe",
+          "tableTo": "TasteTS_user",
+          "columnsFrom": [
+            "creatorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_recipe_id": {
+          "name": "TasteTS_recipe_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_review": {
+      "name": "TasteTS_review",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recipeId": {
+          "name": "recipeId",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "review": {
+          "name": "review",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "review_user_id_idx": {
+          "name": "review_user_id_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        },
+        "review_recipe_id_idx": {
+          "name": "review_recipe_id_idx",
+          "columns": [
+            "recipeId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_review_userId_TasteTS_user_id_fk": {
+          "name": "TasteTS_review_userId_TasteTS_user_id_fk",
+          "tableFrom": "TasteTS_review",
+          "tableTo": "TasteTS_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "TasteTS_review_recipeId_TasteTS_recipe_id_fk": {
+          "name": "TasteTS_review_recipeId_TasteTS_recipe_id_fk",
+          "tableFrom": "TasteTS_review",
+          "tableTo": "TasteTS_recipe",
+          "columnsFrom": [
+            "recipeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_review_userId_recipeId_pk": {
+          "name": "TasteTS_review_userId_recipeId_pk",
+          "columns": [
+            "userId",
+            "recipeId"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {
+        "rating_check": {
+          "name": "rating_check",
+          "value": "`TasteTS_review`.`rating` BETWEEN 1 AND 5"
+        }
+      }
+    },
+    "TasteTS_session": {
+      "name": "TasteTS_session",
+      "columns": {
+        "sessionToken": {
+          "name": "sessionToken",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "session_user_id_idx": {
+          "name": "session_user_id_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "TasteTS_session_userId_TasteTS_user_id_fk": {
+          "name": "TasteTS_session_userId_TasteTS_user_id_fk",
+          "tableFrom": "TasteTS_session",
+          "tableTo": "TasteTS_user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "TasteTS_session_sessionToken": {
+          "name": "TasteTS_session_sessionToken",
+          "columns": [
+            "sessionToken"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_user": {
+      "name": "TasteTS_user",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "emailVerified": {
+          "name": "emailVerified",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP(3)"
+        },
+        "image": {
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "TasteTS_user_id": {
+          "name": "TasteTS_user_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "TasteTS_verification_token": {
+      "name": "TasteTS_verification_token",
+      "columns": {
+        "identifier": {
+          "name": "identifier",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "TasteTS_verification_token_identifier_token_pk": {
+          "name": "TasteTS_verification_token_identifier_token_pk",
+          "columns": [
+            "identifier",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {},
+    "indexes": {}
+  }
+}
