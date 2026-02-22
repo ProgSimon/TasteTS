@@ -79,6 +79,7 @@ export const userReviews = createTable(
     index("user_review_user_id_idx").on(table.userId),
     index("user_review_reviewer_id_idx").on(table.reviewerId),
     check("user_review_rating_check", sql`${table.rating} BETWEEN 1 AND 5`),
+    check("user_review_self_review_check", sql`${table.userId} <> ${table.reviewerId}`)
   ]
 );
 

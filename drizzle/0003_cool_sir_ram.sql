@@ -1,0 +1,1 @@
+ALTER TABLE `TasteTS_userReview` ADD CONSTRAINT `user_review_self_review_check` CHECK (`TasteTS_userReview`.`userId` <> `TasteTS_userReview`.`reviewerId`);
