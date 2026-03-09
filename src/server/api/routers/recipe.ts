@@ -10,6 +10,7 @@ import {
 import enums from "~/server/db/enums";
 import { recipeContents, recipes } from "~/server/db/schema";
 import { validateRecipeVariantExistence, validateRecipeOwnership } from "~/server/services/recipes.service";
+import { searchRecipes } from "~/server/services/search.service";
 
 export const recipeRouter = createTRPCRouter({
     create: protectedProcedure
@@ -166,6 +167,10 @@ export const recipeRouter = createTRPCRouter({
             offset: input.page * input.pageSize,
             where: eq(recipes.creatorId, ctx.session.user.id)
         })
+    }),
+    search: publicProcedure
+    .input(z.object({ query: z.string(), page: z.number(), pageSize: z.number().min(5), includeTotal: z.boolean() }))
+    .query(async ({ ctx, input }) => {
+        return await searchRecipes(input.query, input.page, input.pageSize, ctx.db,  input.includeTotal);
     })
-    //search: work in progress
 })
