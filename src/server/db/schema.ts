@@ -27,10 +27,12 @@ export const tagsOnRecipe = createTable(
   (d) => ({
     recipeId: d
       .bigint({ mode: "number" })
-      .references(() => recipes.id),
+      .references(() => recipes.id)
+      .notNull(),
     tagId: d
       .bigint({ mode: "number" })
-      .references(() => tags.id),
+      .references(() => tags.id)
+      .notNull(),
   }), (table) => [
     primaryKey({ columns: [table.recipeId, table.tagId] }),
     index("tags_on_recipe_recipe_id_idx").on(table.recipeId),
@@ -61,10 +63,12 @@ export const userReviews = createTable(
   (d) => ({
     userId: d
       .varchar({ length: 255 })
-      .references(() => users.id),
+      .references(() => users.id)
+      .notNull(),
     reviewerId: d
       .varchar({ length: 255 })
-      .references(() => users.id),
+      .references(() => users.id)
+      .notNull(),
     rating: d
       .tinyint()
       .notNull(),
@@ -93,10 +97,12 @@ export const recipeReviews = createTable(
   (d) => ({
     userId: d
       .varchar({ length: 255 })
-      .references(() => users.id),
+      .references(() => users.id)
+      .notNull(),
     recipeId: d
       .bigint({ mode: "number" })
-      .references(() => recipes.id),
+      .references(() => recipes.id)
+      .notNull(),
     rating: d
       .tinyint()
       .notNull(),
@@ -124,13 +130,16 @@ export const excludantOnRecipe = createTable(
   (d) => ({
     recipeId: d
       .bigint({ mode: "number"})
-      .references(() => recipes.id),
+      .references(() => recipes.id)
+      .notNull(),
     excludantId: d
       .smallint()
-      .references(() => excludants.id),
+      .references(() => excludants.id)
+      .notNull(),
     ingredientId: d
       .mediumint()
-      .references(() => ingredients.id),
+      .references(() => ingredients.id)
+      .notNull(),
   }), (table) => [
     primaryKey({ columns: [table.recipeId, table.excludantId, table.ingredientId] }),
     index("excludant_on_recipe_recipe_id_idx").on(table.recipeId),
@@ -149,11 +158,14 @@ export const excludantOnIngredient = createTable(
   "excludantOnIngredient",
   (d) => ({
     excludantId: d
-      .smallint(),
+      .smallint()
+      .notNull(),
     ingredientId: d
-      .mediumint(),
+      .mediumint()
+      .notNull(),
     alternativeId: d
-      .mediumint(),
+      .mediumint()
+      .notNull(),
   }), (table) => [
     primaryKey({ columns: [table.excludantId, table.ingredientId, table.alternativeId], name: "excludant_on_ingredient_pk"}), // drizzle identifier fix
     foreignKey({ // drizzle identifier fix
@@ -201,11 +213,14 @@ export const alternativeOnRecipe = createTable(
   "alternativeOnRecipe",
   (d) => ({
     recipeId: d
-      .bigint({ mode: "number"}),
+      .bigint({ mode: "number"})
+      .notNull(),
     ingredientId: d
-      .mediumint(),
+      .mediumint()
+      .notNull(),
     alternativeToId: d
-      .mediumint(),
+      .mediumint()
+      .notNull(),
     amount: d
       .int()
       .notNull(),
@@ -246,10 +261,12 @@ export const ingredientOnRecipe = createTable(
   (d) => ({
     recipeId: d
       .bigint({ mode: "number"})
+      .notNull()
       .references(() => recipes.id),
     ingredientId: d
       .mediumint()
-      .references(() => ingredients.id),
+      .references(() => ingredients.id)
+      .notNull(),
     amount: d
       .int()
       .notNull(),
