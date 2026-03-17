@@ -9,11 +9,16 @@ import { eq, and } from "drizzle-orm";
 import { tags, tagsOnRecipe } from "~/server/db/schema";
 
 export const tagRouter = createTRPCRouter({
+    
     add: protectedProcedure
-    .input(z.object({ tagName: z.string(), recipeId: z.number() }))
+    .input(z.object({ 
+        tagName: z.string(), 
+        recipeId: z.number() 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async tx => {
+
             let tagId: number;
             let tagExists = await tx.query.tags.findFirst({
                 columns: {
@@ -42,8 +47,13 @@ export const tagRouter = createTRPCRouter({
             })
         })
     }),
+
+
     remove: protectedProcedure
-    .input(z.object({ recipeId: z.number(), tagId: z.number() }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        tagId: z.number() 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.delete(tagsOnRecipe)
@@ -52,8 +62,12 @@ export const tagRouter = createTRPCRouter({
                 eq(tagsOnRecipe.tagId, input.tagId)
             ))
     }),
+
+
     getForRecipe: publicProcedure
-    .input(z.object({ recipeId: z.number() }))
+    .input(z.object({ 
+        recipeId: z.number() 
+    }))
     .query(async ({ctx, input}) => {
         return await ctx.db.query.tagsOnRecipe.findMany({
             columns: {

@@ -8,6 +8,7 @@ import { eq, and } from "drizzle-orm";
 import { recipeReviews, userReviews } from "~/server/db/schema";
 
 export const reviewRouter = createTRPCRouter({
+    
     createForUser: protectedProcedure
     .input(z.object({ 
         userId: z.string(), 
@@ -26,6 +27,8 @@ export const reviewRouter = createTRPCRouter({
             })
         })
     }),
+
+
     createForRecipe: protectedProcedure 
     .input(z.object({ 
         recipeId: z.number(), 
@@ -44,6 +47,8 @@ export const reviewRouter = createTRPCRouter({
             })
         })
     }),
+
+
     updateForUser: protectedProcedure
     .input(z.object({ 
         userId: z.string(), 
@@ -63,6 +68,8 @@ export const reviewRouter = createTRPCRouter({
             ))
         })
     }),
+
+
     updateForRecipe: protectedProcedure
     .input(z.object({ 
         recipeId: z.number(), 
@@ -82,6 +89,8 @@ export const reviewRouter = createTRPCRouter({
             ))
         })
     }),
+
+
     removeForUser: protectedProcedure
     .input(z.object({ 
         userId: z.string(), 
@@ -95,6 +104,8 @@ export const reviewRouter = createTRPCRouter({
                 ))
         })
     }),
+
+
     removeForRecipe: protectedProcedure
     .input(z.object({ 
         recipeId: z.number(), 
@@ -108,15 +119,23 @@ export const reviewRouter = createTRPCRouter({
                 ))
         })
     }),
+
+
     getForUser: publicProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(z.object({ 
+        userId: z.string() 
+    }))
     .query(async ({ctx, input}) => {
         return ctx.db.query.userReviews.findMany({
             where: eq(userReviews.userId, input.userId)
         })
     }),
+
+
     getForRecipe: publicProcedure
-    .input(z.object({ recipeId: z.number() }))
+    .input(z.object({ 
+        recipeId: z.number() 
+    }))
     .query(async ({ctx, input}) => {
         return ctx.db.query.recipeReviews.findMany({
             where: eq(recipeReviews.recipeId, input.recipeId)

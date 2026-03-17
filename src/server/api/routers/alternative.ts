@@ -11,6 +11,7 @@ import enums from "~/server/db/enums";
 import { recalculateExcludants } from "~/server/services/excludant.service";
 
 export const alternativeRouter = createTRPCRouter({
+
     add: protectedProcedure
     .input(z.object({ 
         recipeId: z.number(), 
@@ -22,6 +23,7 @@ export const alternativeRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return ctx.db.transaction(async tx => {
+
             const excludantsToRemove = await tx.select( {excludantId: excludantOnRecipe.excludantId } )
                 .from(excludantOnRecipe)
                 .where(and(
@@ -161,6 +163,7 @@ export const alternativeRouter = createTRPCRouter({
         })
     }),
 
+    
     recalculate: protectedProcedure
     .input(z.object({
         recipeId: z.number()

@@ -11,11 +11,18 @@ import enums from "~/server/db/enums";
 import { get } from "http";
 
 export const ingredientRouter = createTRPCRouter({
+    
     add: protectedProcedure
-    .input(z.object({ recipeId: z.number(), ingredientId: z.number(), amount: z.number(), unit: z.enum(enums.units as [string, ...string[]]) }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        ingredientId: z.number(), 
+        amount: z.number(), 
+        unit: z.enum(enums.units as [string, ...string[]]) 
+    }))
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db);
         return await ctx.db.transaction(async tx => {
+
             await tx.insert(ingredientOnRecipe).values({
                 recipeId: input.recipeId,
                 ingredientId: input.ingredientId,
@@ -37,15 +44,21 @@ export const ingredientRouter = createTRPCRouter({
                         recipeId: input.recipeId, 
                         ingredientId: input.ingredientId, 
                         excludantId: e.excludantId 
-                })) // add excludants based on the ingredient added
-            )}
+                }))) // add excludants based on the ingredient added
+            }
         })
     }),
+
+
     remove: protectedProcedure
-    .input(z.object({ recipeId: z.number(), ingredientId: z.number() }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        ingredientId: z.number() 
+    }))
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async tx => {
+
             tx.delete(ingredientOnRecipe)
                 .where(and(
                     eq(ingredientOnRecipe.recipeId, input.recipeId),
@@ -57,6 +70,7 @@ export const ingredientRouter = createTRPCRouter({
                     eq(alternativeOnRecipe.recipeId, input.recipeId),
                     eq(alternativeOnRecipe.alternativeToId, input.ingredientId)
                 ))
+
             // delete all alternatives, and excludants connected with that ingredient
             tx.delete(excludantOnRecipe)
                 .where(and(
@@ -65,8 +79,14 @@ export const ingredientRouter = createTRPCRouter({
                 ))
         })
     }),
+
+
     setAmount: protectedProcedure
-    .input(z.object({ recipeId: z.number(), ingredientId: z.number(), amount: z.number() }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        ingredientId: z.number(), 
+        amount: z.number() 
+    }))
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async tx => {
@@ -78,8 +98,14 @@ export const ingredientRouter = createTRPCRouter({
             ))
         })
     }),
+
+
     setUnit: protectedProcedure
-    .input(z.object({ recipeId: z.number(), ingredientId: z.number(), unit: z.enum(enums.units as [string, ...string[]]) }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        ingredientId: z.number(), 
+        unit: z.enum(enums.units as [string, ...string[]]) 
+    }))
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async tx => {
@@ -91,8 +117,12 @@ export const ingredientRouter = createTRPCRouter({
             ))
         })
     }),
+
+
     getForRecipe: publicProcedure
-    .input(z.object({ recipeId: z.number()}))
+    .input(z.object({ 
+        recipeId: z.number()
+    }))
     .query(async ({ ctx, input}) => {
         return await ctx.db.query.ingredientOnRecipe.findMany({
             columns: {
@@ -109,8 +139,12 @@ export const ingredientRouter = createTRPCRouter({
             where: eq(ingredientOnRecipe.recipeId, input.recipeId)
         })
     }),
+
+
     getByFirstChar: protectedProcedure
-    .input(z.object({ firstchar: z.string().length(1) }))
+    .input(z.object({ 
+        firstchar: z.string().length(1) 
+    }))
     .query(async ({ ctx, input }) => {
         return await ctx.db.query.ingredients.findMany({
             where: or(

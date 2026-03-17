@@ -13,8 +13,12 @@ import { validateRecipeVariantExistence, validateRecipeOwnership } from "~/serve
 import { searchRecipes } from "~/server/services/search.service";
 
 export const recipeRouter = createTRPCRouter({
+    
     create: protectedProcedure
-    .input(z.object({ name: z.string(), language: z.enum(enums.languages as [string, ...string[]])}))
+    .input(z.object({ 
+        name: z.string(), 
+        language: z.enum(enums.languages as [string, ...string[]])
+    }))
     .mutation(async ({ ctx, input }) => {
         return await ctx.db.transaction(async (tx) => {
 
@@ -35,11 +39,18 @@ export const recipeRouter = createTRPCRouter({
             })
         })
     }),
+
+
     addLanguageVariant: protectedProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]), name: z.string()}))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]), 
+        name: z.string()
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async (tx) => {
+
             const recipeVersion = await tx.query.recipeContents.findFirst({
                 where: and(
                     eq(recipeContents.recipeId, input.recipeId),
@@ -62,8 +73,14 @@ export const recipeRouter = createTRPCRouter({
             })
         })
     }),
+
+
     updateContent: protectedProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]), content: z.string() }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]), 
+        content: z.string() 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         await validateRecipeVariantExistence(input.recipeId, input.language, ctx.db)
@@ -74,8 +91,14 @@ export const recipeRouter = createTRPCRouter({
             eq(recipeContents.language, input.language)
         ))
     }),
+
+
     updateIngredientNotes: protectedProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]), ingredientNotes: z.string() }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]), 
+        ingredientNotes: z.string() 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         await validateRecipeVariantExistence(input.recipeId, input.language, ctx.db)
@@ -86,8 +109,14 @@ export const recipeRouter = createTRPCRouter({
             eq(recipeContents.language, input.language)
         ))
     }),
+
+    
     updateName: protectedProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]), name: z.string() }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]), 
+        name: z.string()
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         await validateRecipeVariantExistence(input.recipeId, input.language, ctx.db)
@@ -98,8 +127,13 @@ export const recipeRouter = createTRPCRouter({
             eq(recipeContents.language, input.language)
         ))
     }),
+
+
     removeLanguageVariant: protectedProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]])}))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]])
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         await validateRecipeVariantExistence(input.recipeId, input.language, ctx.db)
@@ -108,8 +142,12 @@ export const recipeRouter = createTRPCRouter({
             eq(recipeContents.language, input.language)
         ))
     }),
+
+
     removeFull: protectedProcedure
-    .input(z.object({ recipeId: z.number() }))
+    .input(z.object({ 
+        recipeId: z.number() 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async (tx) => {
@@ -117,16 +155,27 @@ export const recipeRouter = createTRPCRouter({
             await tx.delete(recipes).where(eq(recipes.id, input.recipeId))
         })
     }),
+
+
     updateStatus: protectedProcedure
-    .input(z.object({ recipeId: z.number(), status: z.enum(enums.statuses as [string, ...string[]]) }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        status: z.enum(enums.statuses as [string, ...string[]]) 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.update(recipes).set({
             status: input.status
         }).where(eq(recipes.id, input.recipeId))
     }),
+
+
     updateVariantStatus: protectedProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]), status: z.enum(enums.statuses as [string, ...string[]]) }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]), 
+        status: z.enum(enums.statuses as [string, ...string[]]) 
+    }))
     .mutation(async ({ctx, input}) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         await validateRecipeVariantExistence(input.recipeId, input.language, ctx.db)
@@ -137,8 +186,13 @@ export const recipeRouter = createTRPCRouter({
             eq(recipeContents.language, input.language)
         ))
     }),
+
+
     getById: publicProcedure
-    .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]) }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]) 
+    }))
     .query(async ({ctx, input}) => {
         return await ctx.db.query.recipeContents.findFirst({
             where: and(
@@ -147,8 +201,14 @@ export const recipeRouter = createTRPCRouter({
             ),
         })
     }),
+
+
     getByUserId: publicProcedure
-    .input(z.object({ userId: z.string(), page: z.number().min(0), pageSize: z.number().min(5) }))
+    .input(z.object({ 
+        userId: z.string(), 
+        page: z.number().min(0), 
+        pageSize: z.number().min(5) 
+    }))
     .query(async ({ctx, input}) => {
         return await ctx.db.query.recipes.findMany({
             limit: input.pageSize,
@@ -159,8 +219,13 @@ export const recipeRouter = createTRPCRouter({
             )
         })
     }),
+
+
     getOwn: protectedProcedure
-    .input(z.object({ page: z.number().min(0), pageSize: z.number().min(5) }))
+    .input(z.object({ 
+        page: z.number().min(0), 
+        pageSize: z.number().min(5) 
+    }))
     .query(async ({ctx, input}) => {
         return await ctx.db.query.recipes.findMany({
             limit: input.pageSize,
@@ -168,8 +233,15 @@ export const recipeRouter = createTRPCRouter({
             where: eq(recipes.creatorId, ctx.session.user.id)
         })
     }),
+
+
     search: publicProcedure
-    .input(z.object({ query: z.string(), page: z.number(), pageSize: z.number().min(5), includeTotal: z.boolean() }))
+    .input(z.object({ 
+        query: z.string(), 
+        page: z.number(), 
+        pageSize: z.number().min(5), 
+        includeTotal: z.boolean() 
+    }))
     .query(async ({ ctx, input }) => {
         return await searchRecipes(input.query, input.page, input.pageSize, ctx.db,  input.includeTotal);
     })

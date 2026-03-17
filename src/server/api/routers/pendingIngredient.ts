@@ -18,6 +18,7 @@ const additionalIngredientsListItem = z.strictObject({
 const additionalIngredientsListSchema = z.array(additionalIngredientsListItem)
 
 export const pendingIngredientsRouter = createTRPCRouter({
+    
 	add: protectedProcedure
     .input(z.object({ 
         recipeId: z.number(), 
@@ -29,6 +30,7 @@ export const pendingIngredientsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return ctx.db.transaction(async tx => {
+
             const oldList = await tx.query.additionalIngredientsLists.findFirst({
                 where: and(
                     eq(additionalIngredientsLists.recipeId, input.recipeId),
@@ -37,22 +39,34 @@ export const pendingIngredientsRouter = createTRPCRouter({
             })
 
             if(!oldList) {
-                const newList = [{ name: input.ingredientName, amount: input.amount, unit: input.unit }]
+                const newList = [{ 
+                    name: input.ingredientName, 
+                    amount: input.amount, 
+                    unit: input.unit 
+                }]
                 const validated = additionalIngredientsListSchema.parse(newList)
+
                 tx.insert(additionalIngredientsLists).values({
                     ingredients: validated
                 })
 
             } else {
                 const oldValidated = additionalIngredientsListSchema.catch([]).parse(oldList.ingredients);
+
                 if(oldValidated.find(e => e.name == input.ingredientName)) {
                         throw new TRPCError({
                             code: "CONFLICT",
                             message: "Ingredient with provided name already in the list."
                         })
                 }
-                const newList = [...oldValidated, { name: input.ingredientName, amount: input.amount, unit: input.unit }];
+
+                const newList = [...oldValidated, { 
+                    name: input.ingredientName, 
+                    amount: input.amount, 
+                    unit: input.unit 
+                }];
                 const newValidated = additionalIngredientsListSchema.parse(newList)
+
                 tx.update(additionalIngredientsLists).set({
                     ingredients: newValidated
                 })
@@ -63,6 +77,8 @@ export const pendingIngredientsRouter = createTRPCRouter({
             }
         })
     }),
+
+
     remove: protectedProcedure
     .input(z.object({ 
         recipeId: z.number(), 
@@ -83,6 +99,7 @@ export const pendingIngredientsRouter = createTRPCRouter({
                 const oldValidated = additionalIngredientsListSchema.parse(oldList)
                 const newList = oldValidated.filter(e => e.name != input.ingredientName)
                 const newValidated = additionalIngredientsListSchema.catch([]).parse(newList)
+
                 tx.update(additionalIngredientsLists).set({
                     ingredients: newValidated
                 })
@@ -93,11 +110,19 @@ export const pendingIngredientsRouter = createTRPCRouter({
             }
         })
     }),
+
+
     promote: protectedProcedure
-    .input(z.object({ recipeId: z.number(), promotedName: z.string(), promotedToId: z.number(), language: z.enum(enums.languages as [string, ...string[]]) }))
+    .input(z.object({ 
+        recipeId: z.number(), 
+        promotedName: z.string(), 
+        promotedToId: z.number(), 
+        language: z.enum(enums.languages as [string, ...string[]]) 
+    }))
     .mutation(async ({ ctx, input }) => {
         await validateRecipeOwnership(input.recipeId, ctx.session.user.id, ctx.db)
         return await ctx.db.transaction(async tx => {
+
             const oldList = await tx.query.additionalIngredientsLists.findFirst({
                 where: and(
                     eq(additionalIngredientsLists.recipeId, input.recipeId),
@@ -108,6 +133,7 @@ export const pendingIngredientsRouter = createTRPCRouter({
             if (oldList) {
                 const oldValidated = additionalIngredientsListSchema.parse(oldList);
                 const promotedElement = oldValidated.find( e => e.name == input.promotedName)
+
                 if(promotedElement) {
                     const newList = oldValidated.filter(e => e.name != input.promotedName)
                     const newValidated = additionalIngredientsListSchema.catch([]).parse(newList)
@@ -140,6 +166,8 @@ export const pendingIngredientsRouter = createTRPCRouter({
             }
        })
     }),
+
+    
     get: publicProcedure
     .input(z.object({ recipeId: z.number(), language: z.enum(enums.languages as [string, ...string[]]) }))
     .query(async ({ ctx, input }) => {
