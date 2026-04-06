@@ -54,7 +54,8 @@ These procedures handle CRUD operations, and service layer calls
     - remove fully with all its variants
     - update recipe status
     - update variant status
-    - get by id
+    - get by id - used to access full content of the recipe
+    - get many - used to get brief recipe info on the search page
     - get by user id
     - get own
     - search
