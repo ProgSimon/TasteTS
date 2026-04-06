@@ -335,7 +335,8 @@ export const recipeContents = createTable(
       .references(() => recipes.id),
     language: d
       .mysqlEnum(enums.languages as [string, ...string[]])
-      .default("english"),
+      .default("english")
+      .notNull(),
     recipeName: d
       .varchar({ length: 255 })
       .notNull(),

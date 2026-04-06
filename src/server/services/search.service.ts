@@ -93,8 +93,7 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
     const fullScore = db.select({
         recipeId: reviewScore.recipeId,
         language: tokenScore.language,
-        score: sql<number>`CAST((${reviewScore.reviewScore}*${tokenScore.tokenScore}) AS FLOAT)`.as('fullScore'),
-        averageRating: reviewScore.averageRating
+        score: sql<number>`CAST((${reviewScore.reviewScore}*${tokenScore.tokenScore}) AS FLOAT)`.as('fullScore')
     })
         .from(tokenScore)
         .innerJoin(reviewScore, eq(reviewScore.recipeId, tokenScore.recipeId))
@@ -102,10 +101,10 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
 
     const foundRecipes = await db.select({ 
         recipeId: recipes.id, 
-        recipeName: recipeContents.recipeName
+        recipeLanguage: fullScore.language,
+        score: fullScore.score
     })
         .from(recipes)
-        .innerJoin(recipeContents, eq(recipes.id, recipeContents.recipeId))
         .innerJoin(fullScore, and(
             eq(recipes.id, fullScore.recipeId),
             eq(recipeContents.language, fullScore.language)
