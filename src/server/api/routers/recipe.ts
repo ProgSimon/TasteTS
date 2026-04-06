@@ -7,8 +7,9 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { db } from "~/server/db";
 import enums from "~/server/db/enums";
-import { recipeContents, recipes } from "~/server/db/schema";
+import { recipeContents, recipes, users } from "~/server/db/schema";
 import { validateRecipeVariantExistence, validateRecipeOwnership } from "~/server/services/recipes.service";
 import { searchRecipes } from "~/server/services/search.service";
 
@@ -200,6 +201,44 @@ export const recipeRouter = createTRPCRouter({
                 eq(recipeContents.language, input.language)
             ),
         })
+    }),
+
+
+    getMany: publicProcedure
+    .input(z.object({
+        recipes: z.object({
+            recipeId: z.number(),
+            recipeLanguage: z.string(),
+            score: z.number()
+        })
+        .array().min(1)
+    }))
+    .query(async ({ ctx, input }) => {
+        const res = await ctx.db.select({
+            recipeId: recipes.id,
+            createdAt: recipes.createdAt,
+            recipeLanguage: recipeContents.language,
+            recipeName: recipeContents.recipeName,
+            creatorId: recipes.creatorId,
+            creatorName: users.name,
+            creatorImage: users.image
+        })
+            .from(recipes)
+            .innerJoin(recipeContents, eq(recipes.id, recipeContents.recipeId))
+            .innerJoin(users, eq(recipes.creatorId, users.id))
+            .where(or(...input.recipes.map(elem => and(
+                eq(recipes.id, elem.recipeId),
+                eq(recipeContents.language, elem.recipeLanguage)
+            ))))
+        
+
+        return res.map(resElem => {
+            const score = input.recipes.find(elem => elem.recipeId === resElem.recipeId && elem.recipeLanguage === resElem.recipeLanguage)
+
+            return score != undefined ? { ...resElem, score: score.score } : null
+        })
+            .filter((e): e is NonNullable<typeof e> => e != null)
+        
     }),
 
 
