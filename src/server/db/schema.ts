@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { index, mysqlTableCreator, primaryKey, check, foreignKey } from "drizzle-orm/mysql-core";
-import { type AdapterAccount } from "next-auth/adapters";
+import { type AdapterAccount } from "@auth/core/adapters";
 import enums from "./enums";
 
 /**
