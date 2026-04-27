@@ -13,7 +13,7 @@ const ownerSession: Session = {
 
 const otherSession: Session = { 
     user: {
-        id: "other-2",
+        id: "eve-2",
         name: 'Eve',
         email: 'eve@test.com'
     },
