@@ -332,7 +332,8 @@ export const recipeContents = createTable(
   (d) => ({
     recipeId: d
       .bigint({ mode: "number"})
-      .references(() => recipes.id),
+      .references(() => recipes.id)
+      .notNull(),
     language: d
       .mysqlEnum(enums.languages as [string, ...string[]])
       .default("english")

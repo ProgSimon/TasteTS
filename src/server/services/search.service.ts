@@ -2,6 +2,7 @@ import { or, and, inArray, eq, notExists, type SQL, exists, sql, desc } from "dr
 import { db } from "~/server/db";
 import specialKeywords from "~/server/services/specialKeywords";
 import { ingredients, excludants, ingredientOnRecipe, excludantOnRecipe, recipes, recipeContents, recipeReviews } from "~/server/db/schema";
+import { alias } from "drizzle-orm/mysql-core";
 type DB = typeof db;
 
 
@@ -19,7 +20,7 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
                 exists(
                     db.select().from(ingredientOnRecipe)
                         .where(and(
-                            eq(ingredientOnRecipe.recipeId, recipes.id),
+                            eq(ingredientOnRecipe.recipeId, recipeContents.recipeId),
                             eq(ingredientOnRecipe.ingredientId, e)
                         ))
                 )
@@ -31,7 +32,7 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
             notExists(
                 db.select().from(ingredientOnRecipe)
                     .where(and(
-                        eq(ingredientOnRecipe.recipeId, recipes.id),
+                        eq(ingredientOnRecipe.recipeId, recipeContents.recipeId),
                         inArray(ingredientOnRecipe.ingredientId, tokens.excludeIngredients)
                     ))
             )
@@ -42,52 +43,66 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
             notExists(
                 db.select().from(excludantOnRecipe)
                     .where(and(
-                        eq(excludantOnRecipe.recipeId, recipes.id),
+                        eq(excludantOnRecipe.recipeId, recipeContents.recipeId),
                         inArray(excludantOnRecipe.excludantId, tokens.foundExcludants)
                     ))
             )
         )
     }
 
-    
-    const matches: SQL[] = [];
+    const recipeContentsAlias = alias(recipeContents, "rc")
+    const ingredientOnRecipeAlias = alias(ingredientOnRecipe, "ir")
+    let keywordMatches: SQL[] = [];
     tokens.searchTokens.forEach(e => {
-        matches.push(
-            sql`(CASE WHEN ${recipeContents.recipeName} LIKE ${`%${e}%`} THEN 1 ELSE 0 END)`
+        keywordMatches.push(
+            sql`(CASE WHEN ${recipeContentsAlias.recipeName} LIKE ${`%${e}%`} THEN 1 ELSE 0 END)`
         );
     })
-    tokens.preferIngredients.forEach(e => {
-        matches.push(
-            sql`(CASE WHEN ${ingredientOnRecipe.ingredientId}=${e} THEN 1 ELSE 0 END)`
-        )
-    })
-    const sumOfMatches = matches.length > 0 ? sql.join(matches, sql` + `) : sql<number>`0`;
+    keywordMatches = [sql`(0`, ...keywordMatches, sql`0)`]
+    const sumOfMatches = keywordMatches.length > 0 ? sql.join(keywordMatches, sql` + `) : sql<number>`0`;
+    if(tokens.preferIngredients.length) {
+        sumOfMatches.append(
+            sql`+ (SELECT COUNT(*) FROM ${ingredientOnRecipe} AS \`ir\` 
+                WHERE ${ingredientOnRecipeAlias.recipeId}=${recipeContentsAlias.recipeId}
+                AND
+                ${ingredientOnRecipeAlias.ingredientId} IN (`
+            )
+        const ids: SQL[] = []
+        tokens.preferIngredients.forEach(e => {
+            ids.push(sql`${e}`)
+        })
+
+        sumOfMatches.append(sql.join(ids, sql`, `))
+        sumOfMatches.append(sql`))`)
+    }
 
     const tokenScore = db.select({
-        recipeId: recipeContents.recipeId,
-        language: recipeContents.language,
+        recipeId: recipeContentsAlias.recipeId,
+        language: recipeContentsAlias.language,
         tokenScore: sumOfMatches.as('tokenScore')
     })
-        .from(recipeContents)
-        .innerJoin(ingredientOnRecipe, eq(recipeContents.recipeId, ingredientOnRecipe.recipeId))
-        .groupBy(recipeContents.recipeId, recipeContents.language)
+        .from(recipeContentsAlias)
+        .leftJoin(ingredientOnRecipe, eq(recipeContentsAlias.recipeId, ingredientOnRecipe.recipeId))
+        .groupBy(recipeContentsAlias.recipeId, recipeContentsAlias.language)
         .as('tokenScore')
 
+
     const reviewScore = db.select({
-        recipeId: recipeReviews.recipeId, 
-        averageRating: sql<number>`CAST(AVG(${recipeReviews.rating}) AS FLOAT)`,
+        recipeId: recipes.id, 
+        averageRating: sql<number>`CAST(IFNULL(AVG(${recipeReviews.rating}), 0.01) AS FLOAT)`.as("averageRating"),
         reviewScore: 
             sql<number>`
             CAST(
-                AVG(${recipeReviews.rating}) *
+                IFNULL(AVG(${recipeReviews.rating}),0.01) *
                 (
                     CAST(COUNT(*) AS FLOAT)/
                     (COUNT(*)+50)
                 )
-            AS FLOAT)`
+            AS FLOAT)`.as("reviewScore")
         })
-        .from(recipeReviews)
-        .groupBy(recipeReviews.recipeId)
+        .from(recipes)
+        .leftJoin(recipeReviews, eq(recipes.id, recipeReviews.recipeId))
+        .groupBy(recipes.id)
         .as('reviewScore')
     
     const fullScore = db.select({
@@ -97,16 +112,17 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
     })
         .from(tokenScore)
         .innerJoin(reviewScore, eq(reviewScore.recipeId, tokenScore.recipeId))
+        .groupBy(reviewScore.recipeId, tokenScore.language)
         .as('fullScore')
 
     const foundRecipes = await db.select({ 
-        recipeId: recipes.id, 
+        recipeId: recipeContents.recipeId, 
         recipeLanguage: fullScore.language,
         score: fullScore.score
     })
-        .from(recipes)
+        .from(recipeContents)
         .innerJoin(fullScore, and(
-            eq(recipes.id, fullScore.recipeId),
+            eq(recipeContents.recipeId, fullScore.recipeId),
             eq(recipeContents.language, fullScore.language)
         ))
         .where(and(
@@ -121,10 +137,9 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
         const totalResponse = await db.select({ 
             total: sql<number>`COUNT(*)`
             })
-            .from(recipes)
-            .innerJoin(recipeContents, eq(recipes.id, recipeContents.recipeId))
+            .from(recipeContents)
             .innerJoin(fullScore, and(
-                eq(recipes.id, fullScore.recipeId),
+                eq(recipeContents.recipeId, fullScore.recipeId),
                 eq(recipeContents.language, fullScore.language)
             ))
             .where(and(
@@ -139,6 +154,12 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
             return {
                 foundRecipes,
                 total
+            }
+        } 
+        else {
+            return {
+                foundRecipes,
+                total: 0
             }
         }
     }
