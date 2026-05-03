@@ -13,7 +13,7 @@ export default defineConfig({
                 
                 test: {
                     name: 'backend-tests',
-                    include: ['./src/server/**/*.test.ts'],
+                    include: ['./src/test/**/*.test.ts'],
                     environment: 'node',
                     globals: true,
                     setupFiles: ['./vitest.backend.setup.ts']
