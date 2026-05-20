@@ -10,7 +10,7 @@ import {
 import { db } from "~/server/db";
 import enums from "~/server/db/enums";
 import { recipeContents, recipes, users } from "~/server/db/schema";
-import { validateRecipeVariantExistence, validateRecipeOwnership } from "~/server/services/recipes.service";
+import { validateRecipeVariantExistence, validateRecipeOwnership, validateRecipePublicStatus } from "~/server/services/recipes.service";
 import { searchRecipes } from "~/server/services/search.service";
 
 export const recipeRouter = createTRPCRouter({
@@ -197,6 +197,8 @@ export const recipeRouter = createTRPCRouter({
         language: z.enum(enums.languages as [string, ...string[]]) 
     }))
     .query(async ({ctx, input}) => {
+        const userId = ctx.session ? ctx.session.user.id : "";
+        await validateRecipePublicStatus([{recipeId: input.recipeId, recipeLanguage: input.language}], userId, ctx.db)
         return await ctx.db.query.recipeContents.findFirst({
             where: and(
                 eq(recipeContents.recipeId, input.recipeId),
@@ -216,6 +218,8 @@ export const recipeRouter = createTRPCRouter({
         .array().min(1)
     }))
     .query(async ({ ctx, input }) => {
+        const userId = ctx.session ? ctx.session.user.id : "";
+        await validateRecipePublicStatus(input.recipes, userId, db)
         const res = await ctx.db.select({
             recipeId: recipes.id,
             createdAt: recipes.createdAt,
