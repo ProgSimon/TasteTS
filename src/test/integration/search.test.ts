@@ -36,4 +36,16 @@ describe("search", () => {
             foundRecipes: expect.any(Array)
         })
     })
+
+    it("does not return private recipes", async () => {
+        let query = await pubCaller.recipe.search({
+            query: "private",
+            page: 0,
+            pageSize: 5,
+            includeTotal: false
+        })
+        expect(query).toEqual({
+            foundRecipes: []
+        })
+    })
 })

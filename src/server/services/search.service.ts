@@ -83,6 +83,7 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
     })
         .from(recipeContentsAlias)
         .leftJoin(ingredientOnRecipe, eq(recipeContentsAlias.recipeId, ingredientOnRecipe.recipeId))
+        .where(eq(recipeContentsAlias.status, "public"))
         .groupBy(recipeContentsAlias.recipeId, recipeContentsAlias.language)
         .as('tokenScore')
 
@@ -102,6 +103,7 @@ export async function searchRecipes(query: string, page: number, pageSize: numbe
         })
         .from(recipes)
         .leftJoin(recipeReviews, eq(recipes.id, recipeReviews.recipeId))
+        .where(eq(recipes.status, "public"))
         .groupBy(recipes.id)
         .as('reviewScore')
     
