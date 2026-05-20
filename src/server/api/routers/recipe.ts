@@ -38,6 +38,8 @@ export const recipeRouter = createTRPCRouter({
                 recipeName: input.name,
                 recipeContent: ""
             })
+
+            return newRecipeId;
         })
     }),
 
